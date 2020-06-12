@@ -10,7 +10,7 @@ import "./header.styles.scss";
 import CartIcon from "../cart-icon/cart-icon.component";
 import CartDropdown from "../cart-dropdown/cart-dropdown.component";
 
-const Header = ({ currentUser }) => (
+const Header = ({ currentUser, hidden }) => (
   <div className="header">
     <Link className="logo-container" to="/">
       <Logo className="logo" />
@@ -33,7 +33,7 @@ const Header = ({ currentUser }) => (
       )}
       <CartIcon />
     </div>
-    <CartDropdown />
+    {hidden ? null : <CartDropdown />}
   </div>
 );
 
@@ -42,9 +42,16 @@ const Header = ({ currentUser }) => (
 //then from root reducer we look for the user value which is userReducer
 //this will then run and reutrn the currentUser value , null
 
-const mapStateToProps = (state) => ({
-  currentUser: state.user.currentUser,
-});
+// const mapStateToProps = (state) => ({
+//   currentUser: state.user.currentUser,
+// });
 
+//then it is changed to this where the state of the cart drop down is added
+// and instead of writing state.cart.hidden and state.user.current user
+//i have destructured them both
+const mapStateToProps = ({ user: { currentUser }, cart: { hidden } }) => ({
+  currentUser,
+  hidden,
+});
 //the first argument passed is to allow access to state, in this case being the root reducer
 export default connect(mapStateToProps)(Header);
