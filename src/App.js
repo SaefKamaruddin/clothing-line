@@ -1,24 +1,22 @@
 import React from "react";
 import "./App.css";
-import { Switch, Route } from "react-router-dom";
-import HomePage from "./pages/hompage/homepage.components.jsx";
+import { Switch, Route, Redirect } from "react-router-dom";
+import { connect } from "react-redux";
+
+import HomePage from "./pages/homepage/homepage.component.jsx";
 import ShopPage from "./pages/shop/shop.component.jsx";
 import Header from "./components/header/header.component.jsx";
 import SignInAndSignUpPage from "./pages/sign-in-and-sign-up/sign-in-and-sign-up.component";
 import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
+import { setCurrentUser } from "./redux/user/user.actions";
 
 class App extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      currentUser: null,
-    };
-  }
-
   // by default is null
   unsubscribeFromAuth = null;
+
   //unsubscribe changes to currentuser= user when component mounts
   componentDidMount() {
+    const { setCurrentUser } = this.props;
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
       //if userAuth not null, userRef is used to check db if there is any updates made in the database
       //the moment user ref instantiate, it will return a snapshot object
@@ -28,20 +26,14 @@ class App extends React.Component {
         const userRef = await createUserProfileDocument(userAuth);
 
         userRef.onSnapshot((snapShot) => {
-          this.setState(
-            {
-              currentUser: {
-                id: snapShot.id,
-                ...snapShot.data(),
-              },
-            },
-            () => console.log(this.state)
-          );
+          setCurrentUser({
+            id: snapShot.id,
+            ...snapShot.data(),
+          });
         });
       }
       // if user logs out set the user to null
-      else
-        this.setState({ currentUser: userAuth }, () => console.log(this.state));
+      else setCurrentUser(userAuth);
     });
   }
   // when component unmounts reset to null
@@ -56,11 +48,33 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/" component={HomePage} />
           <Route path="/shop" component={ShopPage} />
-          <Route path="/signin" component={SignInAndSignUpPage} />
+          <Route
+            exact
+            path="/signin"
+            render={() =>
+              this.props.currentUser ? (
+                <Redirect to="/" />
+              ) : (
+                <SignInAndSignUpPage />
+              )
+            }
+          />
         </Switch>
       </div>
     );
   }
 }
 
-export default App;
+//access to state this.props.currentUser
+const mapStateToProps = ({ user }) => ({
+  currentUser: user.currentUser,
+});
+//setCurrentUser is an action, it gets the user object and calls the disptach function
+// dispatch is a way for redux to know that whatever object passed into dispatch is going
+//to be an action object passed to every reducer
+const mapDispatchToProps = (dispatch) => ({
+  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+});
+
+//this is done to update the reducer value with SET_CURRENT_USER
+export default connect(mapStateToProps, mapDispatchToProps)(App);
