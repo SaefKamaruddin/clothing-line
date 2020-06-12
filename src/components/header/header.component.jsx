@@ -8,6 +8,7 @@ import { ReactComponent as Logo } from "../../assets/crown.svg";
 //connect is a higher order component that modifies our components that uses redux
 import "./header.styles.scss";
 import CartIcon from "../cart-icon/cart-icon.component";
+import CartDropdown from "../cart-dropdown/cart-dropdown.component";
 
 const Header = ({ currentUser }) => (
   <div className="header">
@@ -32,6 +33,7 @@ const Header = ({ currentUser }) => (
       )}
       <CartIcon />
     </div>
+    <CartDropdown />
   </div>
 );
 
