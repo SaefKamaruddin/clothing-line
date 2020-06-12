@@ -2,6 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { ReactComponent as Logo } from "../../assets/crown.svg";
 import { auth } from "../../firebase/firebase.utils";
+
+//connect is a higher order component that modifies our components that uses redux
+import { connect } from "react-redux";
 import "./header.styles.scss";
 
 const Header = (currentUser) => (
@@ -27,4 +30,14 @@ const Header = (currentUser) => (
   </div>
 );
 
-export default Header;
+//the state object is the root reducer
+// from here we pass the current user property which has a value of state.user.currentUser
+//then from root reducer we look for the user value which is userReducer
+//this will then run and reutrn the currentUser value , null
+
+const mapStateToProps = (state) => ({
+  currentUser: state.user.currentUser,
+});
+
+//the first argument passed is to allow access to state, in this case being the root reducer
+export default connect(mapStateToProps)(Header);
