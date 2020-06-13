@@ -9,6 +9,9 @@ import { ReactComponent as Logo } from "../../assets/crown.svg";
 import "./header.styles.scss";
 import CartIcon from "../cart-icon/cart-icon.component";
 import CartDropdown from "../cart-dropdown/cart-dropdown.component";
+import { createStructuredSelector } from "reselect";
+import { selectCurrentUser } from "../../redux/user/user.selectors";
+import { selectCartHidden } from "../../redux/cart/cart.selectors";
 
 const Header = ({ currentUser, hidden }) => (
   <div className="header">
@@ -49,9 +52,17 @@ const Header = ({ currentUser, hidden }) => (
 //then it is changed to this where the state of the cart drop down is added
 // and instead of writing state.cart.hidden and state.user.current user
 //i have destructured them both
-const mapStateToProps = ({ user: { currentUser }, cart: { hidden } }) => ({
-  currentUser,
-  hidden,
+
+// const mapStateToProps = ({ user: { currentUser }, cart: { hidden } }) => ({
+//   currentUser,
+//   hidden,
+// });
+
+//this next step i have used reselect to memoizecurrent user and hidden
+// this will prevent rerendering if anything not related to hidden and current user is being called
+const mapStateToProps = createStructuredSelector({
+  currentUser: selectCurrentUser,
+  hidden: selectCartHidden,
 });
 //the first argument passed is to allow access to state, in this case being the root reducer
 export default connect(mapStateToProps)(Header);

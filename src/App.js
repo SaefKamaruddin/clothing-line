@@ -9,6 +9,7 @@ import Header from "./components/header/header.component.jsx";
 import SignInAndSignUpPage from "./pages/sign-in-and-sign-up/sign-in-and-sign-up.component";
 import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
 import { setCurrentUser } from "./redux/user/user.actions";
+import { selectCurrentUser } from "./redux/user/user.selectors";
 
 class App extends React.Component {
   // by default is null
@@ -66,9 +67,15 @@ class App extends React.Component {
 }
 
 //access to state this.props.currentUser
-const mapStateToProps = ({ user }) => ({
-  currentUser: user.currentUser,
+// const mapStateToProps = ({ user }) => ({
+//   currentUser: user.currentUser,
+// });
+
+//a selector is used to memoize , so it wont rerender if another state not related to this is rerendered
+const mapStateToProps = (state) => ({
+  currentUser: selectCurrentUser(state),
 });
+
 //setCurrentUser is an action, it gets the user object and calls the disptach function
 // dispatch is a way for redux to know that whatever object passed into dispatch is going
 //to be an action object passed to every reducer
