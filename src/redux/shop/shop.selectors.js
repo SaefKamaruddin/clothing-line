@@ -1,16 +1,5 @@
 import { createSelector } from "reselect";
 
-// this maps the string value to the collection id
-//here we use an object
-
-const COLLECTION_ID_MAP = {
-  hats: 1,
-  sneakers: 2,
-  jackets: 3,
-  womens: 4,
-  mens: 5,
-};
-
 const selectShop = (state) => state.shop;
 
 export const selectCollections = createSelector(

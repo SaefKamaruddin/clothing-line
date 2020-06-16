@@ -37,8 +37,8 @@ const CheckoutPage = ({ cartItems, total }) => (
     </div>
     <StripeCheckoutButton price={total} />
     <div className="test-warning">
-      Please use the following test card; <br />
-      Card number: 4242 4242 4242 4242; <br />
+      Please use the following test card: <br />
+      Card number: 4242 4242 4242 4242 <br />
       Expiration date : 01/21
       <br />
       CVV number :123
