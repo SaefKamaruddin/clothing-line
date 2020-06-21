@@ -2,6 +2,7 @@ import React from "react";
 import "./App.css";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
 
 import HomePage from "./pages/homepage/homepage.component.jsx";
 import ShopPage from "./pages/shop/shop.component.jsx";
@@ -11,6 +12,7 @@ import SignInAndSignUpPage from "./pages/sign-in-and-sign-up/sign-in-and-sign-up
 import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
 import { setCurrentUser } from "./redux/user/user.actions";
 import { selectCurrentUser } from "./redux/user/user.selectors";
+// import { selectCollectionsForPreview } from "./redux/shop/shop.selectors";
 
 class App extends React.Component {
   // by default is null
@@ -36,6 +38,10 @@ class App extends React.Component {
       }
       // if user logs out set the user to null
       else setCurrentUser(userAuth);
+      // addCollectionAndItems(
+      //   "collection",
+      //   collectionsArray.map(({ title, items }) => ({ title, items }))
+      // );
     });
   }
   // when component unmounts reset to null
@@ -75,8 +81,9 @@ class App extends React.Component {
 // });
 
 //a selector is used to memoize , so it wont rerender if another state not related to this is rerendered
-const mapStateToProps = (state) => ({
-  currentUser: selectCurrentUser(state),
+const mapStateToProps = createStructuredSelector({
+  currentUser: selectCurrentUser,
+  // collectionsArray: selectCollectionsForPreview,
 });
 
 //setCurrentUser is an action, it gets the user object and calls the disptach function

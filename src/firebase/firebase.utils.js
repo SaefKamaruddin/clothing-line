@@ -20,8 +20,14 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
   //this is making a reference to the current user id
   const userRef = firestore.doc(`users/${userAuth.uid}`);
 
+  //creates a reference for collection
+  const collectionRef = firestore.collection("users");
   //.get pulls a snapshot object. in this context to determine if exists is true or false
   const snapShot = await userRef.get();
+
+  const collectionSnapshot = await collectionRef.get();
+
+  console.log({ collection: collectionSnapshot.docs.map((doc) => doc.data()) });
   console.log(snapShot);
 
   //if snapshot doesnot exist, ie if user id is not in the db, we will create a new user object
@@ -50,6 +56,26 @@ firebase.initializeApp(config);
 export const auth = firebase.auth();
 
 export const firestore = firebase.firestore();
+
+export const addCollectionAndItems = async (collectionKey, objectsToAdd) => {
+  const collectionRef = firestore.collection(collectionKey);
+  console.log(collectionRef);
+
+  // batch uploads all items at once; in a batch,
+  // this is done so if the upload to the server fails,
+  //all uploads fail
+  // if we upload one by one and something happens to
+  // the internet connection midway; the upload will stop there
+  // this will make uploading multiple items inconsistet
+  const batch = firestore.batch();
+  //creates new document reference objects
+  objectsToAdd.forEach((obj) => {
+    const newDocRef = collectionRef.doc();
+    batch.set(newDocRef, obj);
+  });
+
+  await batch.commit();
+};
 
 const provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" });
