@@ -12,7 +12,8 @@ export const selectCollections = createSelector(
 //and map overteh aeeay of keys and return the value of the collections object at that key
 export const selectCollectionsForPreview = createSelector(
   [selectCollections],
-  (collections) => Object.keys(collections).map((key) => collections[key])
+  (collections) =>
+    collections ? Object.keys(collections).map((key) => collections[key]) : []
 );
 
 //this function takes in the collectionUrlParam
@@ -21,7 +22,6 @@ export const selectCollectionsForPreview = createSelector(
 //and then collections.find, which looks for the same collection id that matches with the COLLECTION_ID_MAP
 //thei is an example of a curried function; function that returns another function
 export const selectCollection = (collectionUrlParam) =>
-  createSelector(
-    [selectCollections],
-    (collections) => collections[collectionUrlParam]
+  createSelector([selectCollections], (collections) =>
+    collections ? collections[collectionUrlParam] : null
   );

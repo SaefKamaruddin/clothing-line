@@ -77,6 +77,29 @@ export const addCollectionAndItems = async (collectionKey, objectsToAdd) => {
   await batch.commit();
 };
 
+//convert the snapshot to an object
+//collections refers to the collections we are receiving from the 'collection' collection in firebase. confusing naming convention lol
+
+export const convertCollectionsSnapshotToMap = (collections) => {
+  const transformedCollection = collections.docs.map((doc) => {
+    const { title, items } = doc.data();
+
+    //maps out the information of each item we get from the "collection" collection in firebase
+    return {
+      routeName: encodeURI(title.toLowerCase()),
+      id: doc.id,
+      title,
+      items,
+    };
+  });
+
+  console.log(transformedCollection);
+  return transformedCollection.reduce((accumulator, collection) => {
+    accumulator[collection.title.toLowerCase()] = collection;
+    return accumulator;
+  }, {});
+};
+
 const provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" });
 export const signInWithGoogle = () => auth.signInWithPopup(provider);
